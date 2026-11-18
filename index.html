@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>생리주기 예측 챗봇 - 소개</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Pretendard Webfont -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <!-- Soft Bloom Wellness Palette Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Roboto', 'sans-serif'],
+                    },
+                    colors: {
+                        bloom: {
+                            bg: '#FFF9F6',       // 배경 (Warm Ivory Cream)
+                            soft: '#F7DFE6',     // 연핑크 (Soft Pink)
+                            point: '#E9A8B9',    // 포인트 (Rose Pink)
+                            accent: '#B7788C',   // 강조 (Deep Mauve Berry)
+                            text: '#51434A',     // 글씨 (Warm Charcoal Plum)
+                            light: '#FFFFFF',
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 30px -5px rgba(183, 120, 140, 0.12)',
+                        'card': '0 8px 24px -4px rgba(81, 67, 74, 0.06)',
+                    },
+                    animation: {
+                        'float': 'float 4.5s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-6px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FFF9F6;
+            color: #51434A;
+            word-break: keep-all;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FFF9F6;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #E9A8B9;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #B7788C;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-bloom-point selection:text-white">
+
+    <!-- ==================== 1. 상단 헤더 ('소개'가 첫 번째 메뉴) ==================== -->
+    <header class="sticky top-0 z-40 w-full bg-bloom-bg/90 backdrop-blur-md border-b border-bloom-soft transition-all">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- 브랜드 로고 (첫 페이지 홈 링크) -->
+                <a href="index.html" class="flex items-center gap-2.5 group focus:outline-none">
+                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-bloom-point to-bloom-accent flex items-center justify-center text-white shadow-soft group-hover:scale-105 transition-transform">
+                        <i class="ph-fill ph-flower-lotus text-2xl"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-bold text-lg sm:text-xl tracking-tight text-bloom-accent leading-none">생리주기 예측 챗봇</span>
+                        <span class="text-[11px] font-medium text-bloom-text/70 mt-0.5">월경 건강 케어 파트너</span>
+                    </div>
+                </a>
+
+                <!-- 데스크톱 5개 페이지 내비게이션 ('소개'가 1번) -->
+                <nav class="hidden lg:flex items-center gap-1.5 bg-bloom-soft/50 p-1.5 rounded-full border border-bloom-soft">
+                    <!-- 1. 현재 첫 페이지: 소개 -->
+                    <a href="index.html" aria-current="page" class="px-4 py-2 rounded-full text-sm font-bold bg-bloom-accent text-white shadow-sm flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-bloom-soft animate-pulse"></span>
+                        소개
+                    </a>
+                    <!-- 2~5. 팀원 담당 페이지 연결 링크 -->
+                    <a href="calculator.html" onclick="handleTeammateLink(event, '월경주기·예정일 계산기')" class="px-3.5 py-2 rounded-full text-sm font-medium text-bloom-text/80 hover:text-bloom-accent hover:bg-white/70 transition-all">
+                        월경주기·예정일 계산기
+                    </a>
+                    <a href="pain-care.html" onclick="handleTeammateLink(event, '월경통 통증·증상 케어')" class="px-3.5 py-2 rounded-full text-sm font-medium text-bloom-text/80 hover:text-bloom-accent hover:bg-white/70 transition-all">
+                        월경통 통증·증상 케어
+                    </a>
+                    <a href="encyclopedia.html" onclick="handleTeammateLink(event, '월경 건강 백과 & 교육')" class="px-3.5 py-2 rounded-full text-sm font-medium text-bloom-text/80 hover:text-bloom-accent hover:bg-white/70 transition-all">
+                        월경 건강 백과 & 교육
+                    </a>
+                    <a href="danger-check.html" onclick="handleTeammateLink(event, '위험 신호 체크 & 병원 안내')" class="px-3.5 py-2 rounded-full text-sm font-medium text-bloom-text/80 hover:text-bloom-accent hover:bg-white/70 transition-all">
+                        위험 신호 체크 & 병원 안내
+                    </a>
+                </nav>
+
+                <!-- 모바일 햄버거 메뉴 버튼 -->
+                <div class="flex lg:hidden">
+                    <button id="mobile-menu-btn" type="button" aria-label="메뉴 열기" class="p-2.5 rounded-2xl bg-bloom-soft/70 text-bloom-accent hover:bg-bloom-soft transition-colors">
+                        <i class="ph ph-list text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 모바일 드롭다운 메뉴 ('소개'가 1번) -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-bloom-bg border-b border-bloom-soft px-4 pt-2 pb-5 space-y-1.5 shadow-soft">
+            <a href="index.html" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-2xl text-sm font-bold bg-bloom-accent text-white shadow-sm">
+                1. 소개 (홈 · 현재 페이지)
+            </a>
+            <a href="calculator.html" onclick="toggleMobileMenu(); handleTeammateLink(event, '월경주기·예정일 계산기')" class="block px-4 py-3 rounded-2xl text-sm font-medium text-bloom-text hover:bg-bloom-soft/60 transition-colors">
+                2. 월경주기·예정일 계산기
+            </a>
+            <a href="pain-care.html" onclick="toggleMobileMenu(); handleTeammateLink(event, '월경통 통증·증상 케어')" class="block px-4 py-3 rounded-2xl text-sm font-medium text-bloom-text hover:bg-bloom-soft/60 transition-colors">
+                3. 월경통 통증·증상 케어
+            </a>
+            <a href="encyclopedia.html" onclick="toggleMobileMenu(); handleTeammateLink(event, '월경 건강 백과 & 교육')" class="block px-4 py-3 rounded-2xl text-sm font-medium text-bloom-text hover:bg-bloom-soft/60 transition-colors">
+                4. 월경 건강 백과 & 교육
+            </a>
+            <a href="danger-check.html" onclick="toggleMobileMenu(); handleTeammateLink(event, '위험 신호 체크 & 병원 안내')" class="block px-4 py-3 rounded-2xl text-sm font-medium text-bloom-text hover:bg-bloom-soft/60 transition-colors">
+                5. 위험 신호 체크 & 병원 안내
+            </a>
+        </div>
+    </header>
+
+    <!-- 팀원 페이지 연결 안내 토스트 (미리보기 환경에서 깨진 페이지 이동 방지용) -->
+    <div id="page-toast" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-bloom-text text-white px-5 py-3.5 rounded-2xl shadow-soft flex items-center gap-3 max-w-sm">
+            <div class="w-8 h-8 rounded-xl bg-bloom-point/30 flex items-center justify-center text-bloom-point shrink-0">
+                <i class="ph-fill ph-flower-lotus text-lg"></i>
+            </div>
+            <div class="text-xs leading-relaxed">
+                <p id="toast-title" class="font-bold text-bloom-soft"></p>
+                <p class="text-white/85 mt-0.5">해당 페이지는 담당 팀원이 제작 중인 페이지로 연결됩니다 🌸</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 2. 히어로 섹션 (첫 화면 웰컴 배너) ==================== -->
+    <main id="top">
+        <section class="relative overflow-hidden pt-12 pb-20 sm:pt-16 sm:pb-28">
+            <!-- 배경 장식 블롭 -->
+            <div class="absolute -top-24 -right-24 w-96 h-96 bg-bloom-soft/70 rounded-full blur-3xl -z-10"></div>
+            <div class="absolute top-1/2 -left-28 w-80 h-80 bg-bloom-point/25 rounded-full blur-3xl -z-10"></div>
+
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    
+                    <!-- 좌측 웰컴 메시지 -->
+                    <div class="lg:col-span-7 text-center lg:text-left space-y-6">
+                        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-bloom-soft border border-bloom-point/40 text-bloom-accent text-xs sm:text-sm font-semibold">
+                            <i class="ph-fill ph-sparkle text-bloom-point"></i>
+                            <span>AI 월경 건강 웰니스 파트너 · 생리주기 예측 챗봇</span>
+                        </div>
+
+                        <h1 class="text-3xl sm:text-4xl lg:text-[44px] font-extrabold text-bloom-text leading-[1.28] tracking-tight">
+                            내 몸의 리듬을 가장 <br class="hidden sm:inline">
+                            <span class="text-bloom-accent relative inline-block">
+                                다정하게 이해하는 시간
+                                <span class="absolute bottom-1 left-0 w-full h-3 bg-bloom-soft -z-10 rounded-full"></span>
+                            </span>
+                        </h1>
+
+                        <p class="text-base sm:text-lg text-bloom-text/80 leading-relaxed max-w-2xl mx-auto lg:mx-0">
+                            매달 찾아오는 몸의 변화 앞에서 불안해하거나 혼자 고민하지 마세요. 
+                            <strong class="font-semibold text-bloom-accent">생리주기 예측 챗봇</strong>은 Python과 자연어 처리(AI) 기술을 바탕으로 
+                            일상적인 대화를 통해 내 몸을 이해하고 돌볼 수 있도록 돕는 월경 건강 케어 챗봇입니다.
+                        </p>
+
+                        <!-- 페이지 내부 탐색 CTA 버튼 -->
+                        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-2">
+                            <a href="#why-soft-bloom" class="w-full sm:w-auto px-7 py-4 rounded-2xl bg-bloom-accent hover:bg-bloom-accent/90 text-white font-bold text-base shadow-soft transition-all flex items-center justify-center gap-2">
+                                <span>서비스 이야기 살펴보기</span>
+                                <i class="ph ph-arrow-down text-lg"></i>
+                            </a>
+                            <a href="#service-roadmap" class="w-full sm:w-auto px-7 py-4 rounded-2xl bg-white hover:bg-bloom-soft/50 text-bloom-accent border border-bloom-point/50 font-semibold text-base transition-all flex items-center justify-center gap-2">
+                                <span>전체 메뉴 구성 보기</span>
+                                <i class="ph ph-compass text-lg"></i>
+                            </a>
+                        </div>
+
+                        <!-- 브랜드 무드 비율 표시 -->
+                        <div class="pt-4 flex flex-wrap items-center justify-center lg:justify-start gap-3 text-xs text-bloom-text/75">
+                            <span class="flex items-center gap-1.5 bg-white/85 px-3.5 py-1.5 rounded-full border border-bloom-soft">
+                                <span class="w-2.5 h-2.5 rounded-full bg-bloom-soft border border-bloom-point"></span> 따뜻함 60%
+                            </span>
+                            <span class="flex items-center gap-1.5 bg-white/85 px-3.5 py-1.5 rounded-full border border-bloom-soft">
+                                <span class="w-2.5 h-2.5 rounded-full bg-bloom-accent"></span> 전문성 30%
+                            </span>
+                            <span class="flex items-center gap-1.5 bg-white/85 px-3.5 py-1.5 rounded-full border border-bloom-soft">
+                                <span class="w-2.5 h-2.5 rounded-full bg-bloom-point"></span> 귀여움 10%
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- 우측 챗봇 웰컴 일러스트 카드 (분위기 전달용 정적 카드) -->
+                    <div class="lg:col-span-5">
+                        <div class="relative mx-auto max-w-md bg-white rounded-[28px] p-6 sm:p-7 shadow-soft border border-bloom-soft animate-float">
+                            <!-- 챗봇 프로필 헤더 -->
+                            <div class="flex items-center justify-between pb-4 border-b border-bloom-soft">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-11 h-11 rounded-2xl bg-bloom-soft flex items-center justify-center text-bloom-accent relative">
+                                        <i class="ph-fill ph-flower text-2xl"></i>
+                                        <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-white"></span>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-sm text-bloom-text">생리주기 예측 챗봇</h3>
+                                        <p class="text-xs text-bloom-accent">언제나 곁에 있는 월경 케어 메이트</p>
+                                    </div>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full bg-bloom-bg text-[11px] font-semibold text-bloom-accent border border-bloom-soft">
+                                    Welcome
+                                </span>
+                            </div>
+
+                            <!-- 웰컴 인사말 메시지 -->
+                            <div class="py-6 space-y-4 text-sm">
+                                <div class="flex items-start gap-2.5">
+                                    <div class="w-7 h-7 rounded-full bg-bloom-point/30 flex items-center justify-center text-bloom-accent shrink-0 mt-0.5">
+                                        <i class="ph-fill ph-sparkle text-xs"></i>
+                                    </div>
+                                    <div class="bg-bloom-bg border border-bloom-soft rounded-2xl rounded-tl-sm px-4 py-3.5 text-bloom-text leading-relaxed">
+                                        안녕! 오늘 몸 컨디션은 어때? 🌸<br>
+                                        궁금한 점이나 불편한 곳이 있다면 혼자 걱정하지 말고 편하게 이야기해 줘.
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start gap-2.5">
+                                    <div class="w-7 h-7 rounded-full bg-bloom-point/30 flex items-center justify-center text-bloom-accent shrink-0 mt-0.5">
+                                        <i class="ph-fill ph-heart text-xs"></i>
+                                    </div>
+                                    <div class="bg-bloom-soft/55 border border-bloom-point/30 rounded-2xl rounded-tl-sm px-4 py-3.5 text-bloom-text leading-relaxed">
+                                        상단 메뉴에서 <strong>주기 계산, 통증 케어, 건강 백과, 위험 신호 체크</strong>까지 필요한 도움을 바로 찾아볼 수 있어!
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 하단 안내 캡션 -->
+                            <div class="pt-3 border-t border-bloom-soft/70 flex items-center justify-between text-xs text-bloom-text/65">
+                                <span>생리주기 예측 챗봇 프로젝트</span>
+                                <span class="text-bloom-accent font-semibold">4가지 전문 케어 지원</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 3. 기획 배경 및 핵심 가치 (Why?) ==================== -->
+        <section id="why-soft-bloom" class="py-16 sm:py-24 bg-white/75 border-y border-bloom-soft">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- 섹션 헤더 -->
+                <div class="text-center max-w-2xl mx-auto mb-14 space-y-3">
+                    <span class="inline-block px-3.5 py-1 rounded-full bg-bloom-soft text-bloom-accent text-xs font-bold tracking-wide">
+                        WHY THIS CHATBOT?
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-bloom-text">
+                        왜 <span class="text-bloom-accent">생리주기 예측 챗봇</span>을 기획했을까요?
+                    </h2>
+                    <p class="text-sm sm:text-base text-bloom-text/75 leading-relaxed">
+                        인터넷 검색만으로는 불안감을 키우는 부정확한 정보가 많고, 매달 달라지는 몸의 신호를 혼자 기록하고 해석하기는 쉽지 않습니다. 
+                        생리주기 예측 챗봇은 따뜻한 대화 속에서 올바른 월경 건강 지식을 연결하기 위해 탄생했습니다.
+                    </p>
+                </div>
+
+                <!-- 3가지 핵심 가치 카드 -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-7">
+                    <!-- 가치 1: 따뜻함 60% -->
+                    <div class="bg-bloom-bg rounded-[24px] p-8 border border-bloom-soft shadow-card hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="w-14 h-14 rounded-2xl bg-bloom-soft flex items-center justify-center text-bloom-accent">
+                                    <i class="ph-fill ph-hand-heart text-3xl"></i>
+                                </div>
+                                <span class="px-3 py-1 rounded-full bg-white text-bloom-accent text-xs font-bold border border-bloom-soft">
+                                    따뜻함 60%
+                                </span>
+                            </div>
+                            <h3 class="text-xl font-bold text-bloom-text mb-3">다정한 공감과 정서적 위로</h3>
+                            <p class="text-sm text-bloom-text/80 leading-relaxed">
+                                판단하거나 겁주지 않고 사용자의 감정과 컨디션에 먼저 귀 기울입니다. 
+                                예민해지기 쉬운 시기에도 편안하게 기대어 이야기할 수 있는 심리적 안정감을 전합니다.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-bloom-soft/80 flex items-center gap-2 text-xs font-medium text-bloom-accent">
+                            <i class="ph-fill ph-check-circle"></i>
+                            <span>비판 없는 수용과 따뜻한 대화 어조</span>
+                        </div>
+                    </div>
+
+                    <!-- 가치 2: 전문성 30% -->
+                    <div class="bg-bloom-bg rounded-[24px] p-8 border border-bloom-soft shadow-card hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="w-14 h-14 rounded-2xl bg-bloom-accent/15 flex items-center justify-center text-bloom-accent">
+                                    <i class="ph-fill ph-stethoscope text-3xl"></i>
+                                </div>
+                                <span class="px-3 py-1 rounded-full bg-bloom-accent text-white text-xs font-bold">
+                                    전문성 30%
+                                </span>
+                            </div>
+                            <h3 class="text-xl font-bold text-bloom-text mb-3">신뢰할 수 있는 체계적 안내</h3>
+                            <p class="text-sm text-bloom-text/80 leading-relaxed">
+                                검증된 여성 건강 가이드라인과 체계적인 Python 로직을 기반으로 명확한 기준을 제시하며, 
+                                전문의 진료가 필요한 위험 신호는 놓치지 않고 안내합니다.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-bloom-soft/80 flex items-center gap-2 text-xs font-medium text-bloom-accent">
+                            <i class="ph-fill ph-check-circle"></i>
+                            <span>근거 중심 건강 정보 및 안전 기준 준수</span>
+                        </div>
+                    </div>
+
+                    <!-- 가치 3: 귀여움 10% -->
+                    <div class="bg-bloom-bg rounded-[24px] p-8 border border-bloom-soft shadow-card hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="w-14 h-14 rounded-2xl bg-bloom-point/30 flex items-center justify-center text-bloom-accent">
+                                    <i class="ph-fill ph-smiley-wink text-3xl"></i>
+                                </div>
+                                <span class="px-3 py-1 rounded-full bg-bloom-point text-white text-xs font-bold">
+                                    귀여움 10%
+                                </span>
+                            </div>
+                            <h3 class="text-xl font-bold text-bloom-text mb-3">부담 없이 찾게 되는 친근함</h3>
+                            <p class="text-sm text-bloom-text/80 leading-relaxed">
+                                어렵고 딱딱한 의학 백과사전 대신 포근한 색감과 직관적인 구성으로 
+                                초경을 시작한 청소년부터 성인까지 누구나 매일 부담 없이 이용할 수 있습니다.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-bloom-soft/80 flex items-center gap-2 text-xs font-medium text-bloom-accent">
+                            <i class="ph-fill ph-check-circle"></i>
+                            <span>일상 속 친근한 디지털 웰니스 경험</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 4. 이런 분들께 추천해요 (Target Audience) ==================== -->
+        <section class="py-16 sm:py-20">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-bloom-soft/45 rounded-[28px] p-8 sm:p-12 border border-bloom-soft">
+                    <div class="text-center max-w-xl mx-auto mb-10 space-y-2">
+                        <span class="inline-block px-3 py-1 rounded-full bg-white text-bloom-accent text-xs font-bold border border-bloom-soft">
+                            FOR YOU
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-bloom-text">
+                            이런 분들께 <span class="text-bloom-accent">생리주기 예측 챗봇</span>을 추천해요
+                        </h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                        <div class="bg-white rounded-2xl p-5 border border-bloom-soft flex items-start gap-3.5 shadow-2xs">
+                            <div class="w-9 h-9 rounded-xl bg-bloom-soft text-bloom-accent flex items-center justify-center shrink-0 mt-0.5">
+                                <i class="ph-fill ph-calendar-blank text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-sm sm:text-base text-bloom-text">매달 다가오는 예정일을 미리 대비하고 싶은 분</h3>
+                                <p class="text-xs sm:text-sm text-bloom-text/75 mt-1 leading-relaxed">불규칙하거나 헷갈리는 월경 주기를 간편하게 계산하고 중요한 일정을 준비하고 싶을 때</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-2xl p-5 border border-bloom-soft flex items-start gap-3.5 shadow-2xs">
+                            <div class="w-9 h-9 rounded-xl bg-bloom-soft text-bloom-accent flex items-center justify-center shrink-0 mt-0.5">
+                                <i class="ph-fill ph-heart-half text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-sm sm:text-base text-bloom-text">생리통과 컨디션 변화를 현명하게 돌보고 싶은 분</h3>
+                                <p class="text-xs sm:text-sm text-bloom-text/75 mt-1 leading-relaxed">복통, 요통, 감정 기복 등 내 증상에 맞는 일상 속 완화 방법을 알고 싶을 때</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-2xl p-5 border border-bloom-soft flex items-start gap-3.5 shadow-2xs">
+                            <div class="w-9 h-9 rounded-xl bg-bloom-soft text-bloom-accent flex items-center justify-center shrink-0 mt-0.5">
+                                <i class="ph-fill ph-books text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-sm sm:text-base text-bloom-text">올바른 월경 상식과 위생용품 정보가 궁금한 분</h3>
+                                <p class="text-xs sm:text-sm text-bloom-text/75 mt-1 leading-relaxed">검증되지 않은 속설 대신 내 몸의 호르몬 변화와 건강한 관리법을 배우고 싶을 때</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-2xl p-5 border border-bloom-soft flex items-start gap-3.5 shadow-2xs">
+                            <div class="w-9 h-9 rounded-xl bg-bloom-soft text-bloom-accent flex items-center justify-center shrink-0 mt-0.5">
+                                <i class="ph-fill ph-hospital text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-sm sm:text-base text-bloom-text">산부인과 방문이 필요한 신호인지 헷갈리는 분</h3>
+                                <p class="text-xs sm:text-sm text-bloom-text/75 mt-1 leading-relaxed">평소와 다른 출혈량이나 극심한 통증이 병원 진료가 필요한 상태인지 점검하고 싶을 때</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 5. 홈페이지 구성 안내 (다른 4개 페이지로 연결하는 길잡이 섹션) ==================== -->
+        <section id="service-roadmap" class="py-16 sm:py-24 bg-white/75 border-y border-bloom-soft">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- 섹션 헤더 -->
+                <div class="text-center max-w-2xl mx-auto mb-14 space-y-2.5">
+                    <span class="inline-block px-3.5 py-1 rounded-full bg-bloom-soft text-bloom-accent text-xs font-bold">
+                        SERVICE DIRECTORY · 4 CARE PAGES
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-bloom-text">
+                        생리주기 예측 챗봇 <span class="text-bloom-accent">주요 서비스 구성 안내</span>
+                    </h2>
+                    <p class="text-sm sm:text-base text-bloom-text/75 leading-relaxed">
+                        소개 페이지 외에도 목적에 따라 바로 이용할 수 있는 4가지 전문 케어 페이지가 준비되어 있습니다. 
+                        원하는 메뉴를 선택해 해당 페이지로 이동해 보세요.
+                    </p>
+                </div>
+
+                <!-- 4개 팀원 페이지 안내 카드 (기능 침범 없이 깔끔한 안내 및 페이지 링크만 제공) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-7">
+                    
+                    <!-- 안내 1: 월경주기·예정일 계산기 -->
+                    <a href="calculator.html" onclick="handleTeammateLink(event, '월경주기·예정일 계산기')" class="group bg-bloom-bg rounded-[24px] p-7 border border-bloom-soft shadow-card hover:bg-white hover:border-bloom-point hover:shadow-soft transition-all duration-300 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="px-3 py-1 rounded-full bg-white text-bloom-accent text-xs font-extrabold border border-bloom-soft">
+                                    MENU 02
+                                </span>
+                                <div class="w-11 h-11 rounded-2xl bg-bloom-soft text-bloom-accent flex items-center justify-center group-hover:bg-bloom-accent group-hover:text-white transition-colors">
+                                    <i class="ph-fill ph-calendar-heart text-2xl"></i>
+                                </div>
+                            </div>
+                            <h3 class="text-xl font-bold text-bloom-text group-hover:text-bloom-accent transition-colors mb-2">
+                                월경주기·예정일 계산기
+                            </h3>
+                            <p class="text-sm text-bloom-text/80 leading-relaxed">
+                                마지막 월경 시작일과 평균 주기를 바탕으로 다음 월경 예정일과 가임기, 배란 시기를 한눈에 확인할 수 있는 전용 계산기 페이지입니다.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-bloom-soft flex items-center justify-between text-xs font-bold text-bloom-accent">
+                            <span>주기 예측 및 일정 관리</span>
+                            <span class="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                                페이지 바로가기 <i class="ph-bold ph-arrow-right"></i>
+                            </span>
+                        </div>
+                    </a>
+
+                    <!-- 안내 2: 월경통 통증·증상 케어 -->
+                    <a href="pain-care.html" onclick="handleTeammateLink(event, '월경통 통증·증상 케어')" class="group bg-bloom-bg rounded-[24px] p-7 border border-bloom-soft shadow-card hover:bg-white hover:border-bloom-point hover:shadow-soft transition-all duration-300 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="px-3 py-1 rounded-full bg-white text-bloom-accent text-xs font-extrabold border border-bloom-soft">
+                                    MENU 03
+                                </span>
+                                <div class="w-11 h-11 rounded-2xl bg-bloom-point/30 text-bloom-accent flex items-center justify-center group-hover:bg-bloom-accent group-hover:text-white transition-colors">
+                                    <i class="ph-fill ph-first-aid-kit text-2xl"></i>
+                                </div>
+                            </div>
+                            <h3 class="text-xl font-bold text-bloom-text group-hover:text-bloom-accent transition-colors mb-2">
+                                월경통 통증·증상 케어
+                            </h3>
+                            <p class="text-sm text-bloom-text/80 leading-relaxed">
+                                통증 부위와 강도, 동반되는 월경 전 증후군(PMS) 양상에 맞추어 일상에서 실천할 수 있는 온찜질·스트레칭·생활 케어 팁을 안내하는 페이지입니다.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-bloom-soft flex items-center justify-between text-xs font-bold text-bloom-accent">
+                            <span>증상별 맞춤 완화 가이드</span>
+                            <span class="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                                페이지 바로가기 <i class="ph-bold ph-arrow-right"></i>
+                            </span>
+                        </div>
+                    </a>
+
+                    <!-- 안내 3: 월경 건강 백과 & 교육 -->
+                    <a href="encyclopedia.html" onclick="handleTeammateLink(event, '월경 건강 백과 & 교육')" class="group bg-bloom-bg rounded-[24px] p-7 border border-bloom-soft shadow-card hover:bg-white hover:border-bloom-point hover:shadow-soft transition-all duration-300 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="px-3 py-1 rounded-full bg-white text-bloom-accent text-xs font-extrabold border border-bloom-soft">
+                                    MENU 04
+                                </span>
+                                <div class="w-11 h-11 rounded-2xl bg-bloom-soft text-bloom-accent flex items-center justify-center group-hover:bg-bloom-accent group-hover:text-white transition-colors">
+                                    <i class="ph-fill ph-book-open-text text-2xl"></i>
+                                </div>
+                            </div>
+                            <h3 class="text-xl font-bold text-bloom-text group-hover:text-bloom-accent transition-colors mb-2">
+                                월경 건강 백과 & 교육
+                            </h3>
+                            <p class="text-sm text-bloom-text/80 leading-relaxed">
+                                호르몬 주기의 원리, 다양한 월경 용품의 올바른 사용법, 흔한 월경 오해와 진실 등 정확한 여성 건강 지식을 알기 쉽게 정리한 교육 페이지입니다.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-bloom-soft flex items-center justify-between text-xs font-bold text-bloom-accent">
+                            <span>올바른 월경 상식 라이브러리</span>
+                            <span class="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                                페이지 바로가기 <i class="ph-bold ph-arrow-right"></i>
+                            </span>
+                        </div>
+                    </a>
+
+                    <!-- 안내 4: 위험 신호 체크 & 병원 안내 -->
+                    <a href="danger-check.html" onclick="handleTeammateLink(event, '위험 신호 체크 & 병원 안내')" class="group bg-bloom-bg rounded-[24px] p-7 border border-bloom-soft shadow-card hover:bg-white hover:border-bloom-point hover:shadow-soft transition-all duration-300 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="px-3 py-1 rounded-full bg-white text-bloom-accent text-xs font-extrabold border border-bloom-soft">
+                                    MENU 05
+                                </span>
+                                <div class="w-11 h-11 rounded-2xl bg-bloom-accent/15 text-bloom-accent flex items-center justify-center group-hover:bg-bloom-accent group-hover:text-white transition-colors">
+                                    <i class="ph-fill ph-siren text-2xl"></i>
+                                </div>
+                            </div>
+                            <h3 class="text-xl font-bold text-bloom-text group-hover:text-bloom-accent transition-colors mb-2">
+                                위험 신호 체크 & 병원 안내
+                            </h3>
+                            <p class="text-sm text-bloom-text/80 leading-relaxed">
+                                과다출혈, 장기 무월경, 극심한 통증 등 전문의 진료가 필요한 위험 신호(Red Flag)를 점검하고 산부인과 방문을 돕는 안전 안내 페이지입니다.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-bloom-soft flex items-center justify-between text-xs font-bold text-bloom-accent">
+                            <span>이상 징후 점검 및 진료 안내</span>
+                            <span class="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                                페이지 바로가기 <i class="ph-bold ph-arrow-right"></i>
+                            </span>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 6. 챗봇 작동 원리 & 안전 고지 ==================== -->
+        <section class="py-16 sm:py-24">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14">
+                
+                <!-- Python 기반 챗봇 작동 흐름 소개 -->
+                <div>
+                    <div class="text-center max-w-2xl mx-auto mb-12 space-y-2.5">
+                        <span class="inline-block px-3.5 py-1 rounded-full bg-bloom-soft text-bloom-accent text-xs font-bold">
+                            HOW IT WORKS · PYTHON AI ARCHITECTURE
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-bloom-text">
+                            생리주기 예측 챗봇은 <span class="text-bloom-accent">이렇게 작동해요</span>
+                        </h2>
+                        <p class="text-sm sm:text-base text-bloom-text/75">
+                            Python 기반 대화 처리 구조와 자연어 분석 모델을 결합해 사용자의 질문을 이해하고 알맞은 케어 정보를 연결합니다.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Step 1 -->
+                        <div class="bg-white rounded-[24px] p-7 border border-bloom-soft shadow-card">
+                            <div class="flex items-center gap-3 mb-4">
+                                <span class="w-9 h-9 rounded-full bg-bloom-point text-white font-bold text-sm flex items-center justify-center">1</span>
+                                <span class="text-xs font-bold text-bloom-accent uppercase tracking-wider">User Input</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-bloom-text mb-2">일상 언어로 고민 입력</h3>
+                            <p class="text-sm text-bloom-text/75 leading-relaxed">
+                                어려운 의학 용어를 몰라도 괜찮습니다. 사용자가 평소 말하는 자연스러운 문장으로 증상이나 궁금한 점을 입력합니다.
+                            </p>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div class="bg-white rounded-[24px] p-7 border border-bloom-soft shadow-card">
+                            <div class="flex items-center gap-3 mb-4">
+                                <span class="w-9 h-9 rounded-full bg-bloom-accent text-white font-bold text-sm flex items-center justify-center">2</span>
+                                <span class="text-xs font-bold text-bloom-accent uppercase tracking-wider">Python & AI Engine</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-bloom-text mb-2">질문 의도 분석 및 맞춤 응답</h3>
+                            <p class="text-sm text-bloom-text/75 leading-relaxed">
+                                Python 대화 엔진과 자연어 처리 모델이 입력된 문맥을 분석하여 공감 어린 답변과 필요한 건강 가이드를 생성합니다.
+                            </p>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="bg-white rounded-[24px] p-7 border border-bloom-soft shadow-card">
+                            <div class="flex items-center gap-3 mb-4">
+                                <span class="w-9 h-9 rounded-full bg-bloom-text text-white font-bold text-sm flex items-center justify-center">3</span>
+                                <span class="text-xs font-bold text-bloom-accent uppercase tracking-wider">Care Connection</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-bloom-text mb-2">4대 전문 케어 메뉴 연결</h3>
+                            <p class="text-sm text-bloom-text/75 leading-relaxed">
+                                대화 주제에 따라 주기 계산기, 통증 케어, 건강 백과, 위험 신호 체크 등 가장 도움이 되는 세부 기능으로 자연스럽게 이어줍니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 의료적 면책 조항 (Medical Disclaimer) -->
+                <div class="bg-white rounded-[24px] p-6 sm:p-8 border-2 border-bloom-point/50 shadow-card flex flex-col sm:flex-row items-start gap-5">
+                    <div class="w-12 h-12 rounded-2xl bg-bloom-soft text-bloom-accent flex items-center justify-center shrink-0">
+                        <i class="ph-fill ph-shield-warning text-2xl"></i>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <h3 class="text-base sm:text-lg font-bold text-bloom-text">의료적 안내 및 안전 고지</h3>
+                            <span class="px-2.5 py-0.5 rounded-full bg-bloom-bg text-[11px] font-bold text-bloom-accent border border-bloom-soft">필독 안내</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-bloom-text/80 leading-relaxed">
+                            <strong>생리주기 예측 챗봇</strong>이 제공하는 모든 정보는 사용자의 월경 건강 이해와 자기 관리를 돕기 위한 <strong>일반적인 참고 및 교육 목적의 안내</strong>입니다. 
+                            본 서비스는 의사의 전문적인 의학적 진단, 처방 또는 치료를 대신할 수 없으며, 평소와 다른 극심한 통증이나 비정상적인 출혈이 지속될 경우 반드시 산부인과 전문의의 진료를 받으시기 바랍니다.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- ==================== 7. 하단 푸터 ('소개'가 첫 번째 링크) ==================== -->
+    <footer class="bg-white border-t border-bloom-soft pt-12 pb-10">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 pb-10 border-b border-bloom-soft">
+                <!-- 브랜드 요약 -->
+                <div class="md:col-span-5 space-y-3">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 rounded-xl bg-bloom-accent flex items-center justify-center text-white">
+                            <i class="ph-fill ph-flower-lotus text-xl"></i>
+                        </div>
+                        <span class="font-bold text-lg text-bloom-accent">생리주기 예측 챗봇</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-bloom-text/75 leading-relaxed">
+                        내 몸의 리듬을 가장 다정하게 이해하는 시간.<br>
+                        Python 대화형 AI 기술을 활용한 월경 건강 케어 챗봇 프로젝트입니다.
+                    </p>
+                </div>
+
+                <!-- 5개 페이지 퀵 링크 ('소개' 1번) -->
+                <div class="md:col-span-4 space-y-3">
+                    <h4 class="text-sm font-bold text-bloom-text">전체 페이지 메뉴</h4>
+                    <ul class="space-y-2 text-xs sm:text-sm text-bloom-text/75">
+                        <li><a href="index.html" class="font-bold text-bloom-accent">1. 소개 (홈)</a></li>
+                        <li><a href="calculator.html" onclick="handleTeammateLink(event, '월경주기·예정일 계산기')" class="hover:text-bloom-accent transition-colors">2. 월경주기·예정일 계산기</a></li>
+                        <li><a href="pain-care.html" onclick="handleTeammateLink(event, '월경통 통증·증상 케어')" class="hover:text-bloom-accent transition-colors">3. 월경통 통증·증상 케어</a></li>
+                        <li><a href="encyclopedia.html" onclick="handleTeammateLink(event, '월경 건강 백과 & 교육')" class="hover:text-bloom-accent transition-colors">4. 월경 건강 백과 & 교육</a></li>
+                        <li><a href="danger-check.html" onclick="handleTeammateLink(event, '위험 신호 체크 & 병원 안내')" class="hover:text-bloom-accent transition-colors">5. 위험 신호 체크 & 병원 안내</a></li>
+                    </ul>
+                </div>
+
+                <!-- 팀 프로젝트 안내 -->
+                <div class="md:col-span-3 space-y-3">
+                    <h4 class="text-sm font-bold text-bloom-text">프로젝트 구성</h4>
+                    <div class="p-4 rounded-2xl bg-bloom-bg border border-bloom-soft text-xs text-bloom-text/80 space-y-1.5 leading-relaxed">
+                        <p class="font-semibold text-bloom-accent">5인 팀 협업 웹 프로젝트</p>
+                        <p>본 첫 페이지는 서비스의 기획 의도와 전체 구성을 안내하는 <strong>[소개]</strong> 페이지입니다.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-bloom-text/60">
+                <p>© 2026 생리주기 예측 챗봇 Team Project. All rights reserved.</p>
+                <p>Warmth 60% · Professionalism 30% · Cuteness 10%</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== 스크립트 ==================== -->
+    <script>
+        // 모바일 내비게이션 토글
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('hidden');
+        }
+        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+
+        // 팀원이 제작하는 2~5번 페이지 링크 클릭 시 미리보기 안내 토스트 표시
+        let toastTimeout;
+        function handleTeammateLink(event, pageName) {
+            event.preventDefault();
+            const toast = document.getElementById('page-toast');
+            const title = document.getElementById('toast-title');
+            title.textContent = `'${pageName}' 페이지로 이동`;
+            
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 3200);
+        }
+    </script>
+</body>
+</html>
